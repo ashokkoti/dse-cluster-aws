@@ -1,0 +1,17 @@
+---
+#- debug:
+#    msg: "{{ private_ip }}"
+#- debug:
+#    msg: "{{ ansible_host }}"
+
+- name: Start cassandra or dse service
+  service:
+    name: "{{ srvc_name }}"
+    state: restarted
+
+- name: Wait for Cassandra process is up and running
+  wait_for:
+    host: "{{ private_ip }}"
+    port: 9042
+    delay: 1
+    state: started

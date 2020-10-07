@@ -1,0 +1,69 @@
+---
+# Install OpsCenter server
+- hosts: opsc_srv
+  any_errors_fatal: true
+  become: true
+  become_method: sudo
+  roles:
+  - { role: datastax_pkg }
+  - { role: openjdk8_inst }
+  tasks: 
+  - name: Install DSE OpsCenter
+    apt:
+      name: "opscenter=6.8.0"
+      state: present
+      update_cache: yes
+  - name: Configure OpsCenter to enable HTTPS access 
+    replace:
+      name: "/etc/opscenter/opscenterd.conf"
+      regexp: "^#ssl_"
+      replace: "ssl_"
+      owner: opscenter
+      group: opscenter
+      mode: 0644    
+  - name: Configure OpsCenter to enable authentication
+    lineinfile:
+      name: "/etc/opscenter/opscenterd.conf"
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      owner: opscenter
+      group: opscenter
+      mode: 0644
+    with_items:
+      - { regexp: 'enabled = False', line: 'enabled = True' }
+  - name: Start OpsCenter service
+    service:
+      name: "opscenterd"
+      state: started
+  #- name: Docker + nb Setup
+  #  shell: "wget https://github.com/nosqlbench/nosqlbench/releases/latest/download/nb"
+  #  shell: "chmod +x nb"
+  #  shell: "curl -fsSL https://get.docker.com -o get-docker.sh"
+  #  shell: "sudo sh get-docker.sh"
+  #  shell: "sudo usermod -aG docker ubuntu"
+
+# Install and configure datastax-agent
+- hosts: datastax_agent 
+  any_errors_fatal: true
+  become: true
+  become_method: sudo
+  roles:
+    - { role: datastax_pkg }
+    - { role: openjdk8_inst }
+  tasks:
+    - name: Install datastax-agent
+      apt:
+        name: "datastax-agent=6.8.0"
+        state: present
+        update_cache: yes
+    - name: Configure stomp_address
+      lineinfile:
+        name: "/var/lib/datastax-agent/conf/address.yaml"
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { regexp: 'stomp_interface', line: "stomp_interface: {{ opsc_srv_ip }}" }
+    - name: Start datastax-agent service
+      service:
+        name: "datastax-agent"
+        state: started

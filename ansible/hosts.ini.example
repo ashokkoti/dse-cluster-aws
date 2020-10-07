@@ -1,0 +1,29 @@
+[dse:children]
+dse_core
+
+[dse_core]
+XXXXX private_ip=XXXXX seed=true dc=core_dc rack=RAC1 vnode=8 initial_token=-9223372036854775808
+XXXXX private_ip=XXXXX seed=true dc=core_dc rack=RAC2 vnode=8 initial_token=-6148914691236517206
+XXXXX private_ip=XXXXX seed=true dc=core_dc rack=RAC3 vnode=8 initial_token=-3074457345618258604
+XXXXX private_ip=XXXXX seed=true dc=core_dc rack=RAC1 vnode=8 initial_token=-2
+XXXXX private_ip=XXXXX seed=true dc=core_dc rack=RAC2 vnode=8 initial_token=3074457345618258600
+XXXXX private_ip=XXXXX seed=true dc=core_dc rack=RAC3 vnode=8 initial_token=6148914691236517202
+[dse:vars]
+cluster_name=MyAppCluster
+
+[dse_core:vars]
+solr_enabled=0
+spark_enabled=0
+graph_enabled=0
+auto_bootstrap=1
+
+[opsc_srv]
+-rf private_ip=XXXXX
+
+[datastax_agent]
+XXXXX private_ip=XXXXX opsc_srv_ip=XXXXX
+XXXXX private_ip=XXXXX opsc_srv_ip=XXXXX
+XXXXX private_ip=XXXXX opsc_srv_ip=XXXXX
+XXXXX private_ip=XXXXX opsc_srv_ip=XXXXX
+XXXXX private_ip=XXXXX opsc_srv_ip=XXXXX
+XXXXX private_ip=XXXXX opsc_srv_ip=XXXXX
